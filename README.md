@@ -9,8 +9,9 @@ import FitbitDataExtractor and use as arguments (args) your email and password t
 Examples
 ---------
 ```java
-    //authenticate
+    		//authenticate
 		FitbitDataExtractor extractor = new FitbitDataExtractor();
+		extractor.getAuthenticated(args[0], args[1]);
 
 		//get heartrate and calories for specific data and store as csv
 		extractor.getIntraDayHeartandCalories("2016-01-31", true);
