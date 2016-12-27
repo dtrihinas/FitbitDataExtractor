@@ -246,8 +246,9 @@ public class FitbitDataExtractor {
 	}
 	
 	public static void main(String[] args) {
+		//authenticate
 		FitbitDataExtractor extractor = new FitbitDataExtractor();
-		
+
 		if (args.length == 3)
 			extractor.getAuthenticated(args[0], args[1], args[2]);
 		else if (args.length == 2)
@@ -257,19 +258,5 @@ public class FitbitDataExtractor {
 			System.exit(-1);
 		}
 
-
-//		extractor.getIntraDayHeartandCalories("2016-01-31", true);
-//		extractor.getIntraDaySteps("2016-01-31", true);
-		
-//		for (int i = 1; i <= 31; i++)
-//			extractor.getIntraDaySteps("2016-03-" + i, true);
-
-		for (int i = 1; i <= 31; i++) {
-			extractor.getIntraDaySteps("2016-07-" + i, true);
-			extractor.getIntraDayCalories("2016-07-" + i, true);
-			extractor.getIntraDayFloors("2016-07-" + i, true);
-			extractor.getIntraDayActiveMins("2016-07-" + i, true);
-			extractor.getIntraDayDistance("2016-07-" + i, true);
-		}
 	}
 }
