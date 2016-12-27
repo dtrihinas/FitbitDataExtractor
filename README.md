@@ -4,7 +4,7 @@ extract YOUR own raw data (steps, heartrate, calories, active minutes, distance)
 
 How to run
 ----------
-import FitbitDataExtractor and use your email and password to get YOUR own data
+import FitbitDataExtractor and use as arguments (args) your email and password to get YOUR own data
 
 Examples
 ---------
