@@ -21,6 +21,8 @@ import org.json.simple.parser.JSONParser;
 
 public class FitbitDataExtractor {
 	
+	private static final String USAGE = "java -jar FitbitDataExtractor.jar <email> <password> [<rememberMe>]";
+	
 	private static final String FITBIT_LOGIN_ENDPOINT = "https://www.fitbit.com/login";
 	private static final String FITBIT_AJAX_ENDPOINT = "https://www.fitbit.com/ajaxapi";
 
@@ -32,6 +34,10 @@ public class FitbitDataExtractor {
 	public FitbitDataExtractor() {
 		this.client = HttpClientBuilder.create().build();
 		this.cookie = null;
+	}
+	
+	public void getAuthenticated(String email, String password) {
+		this.getAuthenticated(email, password, "false");
 	}
 	
 	public void getAuthenticated(String email, String password, String rememberMe) {
@@ -57,16 +63,17 @@ public class FitbitDataExtractor {
 			req.setEntity(new UrlEncodedFormEntity(params));
 			CloseableHttpResponse resp = client.execute(req);
 		
-			System.out.println(resp.getStatusLine());
+			System.out.println("Authentication: " + resp.getStatusLine());
 			
 			this.cookie = null;
 			for(Header h : this.getCookies(resp)) {
-//				System.out.println(h);
-				if (h.getName().equals("u"))
-					this.token = h.getValue().split("|")[2];
+				//if (h.getName().equals("u")) {
+				String[] biscuit = h.getValue().split("=");
+				if (biscuit[0].equals("u"))
+					//this.token = h.getValue().split("|")[2];
+					this.token = biscuit[1].trim().split("\\|")[2];
 				this.cookie = h.getValue() + ";";
-			}
-			
+			}			
 	    }
 	    catch (Exception e) {
 	    	e.printStackTrace();
@@ -83,8 +90,9 @@ public class FitbitDataExtractor {
 	    		return;
 	    	}
 	    	
-    		System.out.println("Got Heart and Calorie Data");
-    		
+    		System.out.println("getIntraDayHeartandCalories: Got Heart and Calorie Data");
+    		System.out.println(json);
+
 	    	if (csv) {
 	    		BufferedWriter bw = new BufferedWriter(new FileWriter("heart-calories-" + day));
 
@@ -161,13 +169,13 @@ public class FitbitDataExtractor {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 	    params.add(new BasicNameValuePair("request", request));
 	    params.add(new BasicNameValuePair("csrfToken", this.token));
-	    
+
 	    try {
 	    	req.setEntity(new UrlEncodedFormEntity(params));
 	    	CloseableHttpResponse resp = client.execute(req);
 	    	
 			String json = EntityUtils.toString(resp.getEntity());
-    		System.out.println(resp.getStatusLine());
+    		System.out.println("getIntraDayData: " + resp.getStatusLine());
     		
     		return json;
 
@@ -181,10 +189,9 @@ public class FitbitDataExtractor {
 	
 	private void metrics15mindata(String day, boolean csv, String datatype) {
 	    try {
-	    	
-	    	this.getIntraDayData(day, datatype);
-	    	
+	    		    	
 	    	String json = this.getIntraDayData(day, datatype);
+	    	
 	    	if (json == null) {
 	    		System.out.println("could not get the data you requested");
 	    		return;
@@ -229,7 +236,7 @@ public class FitbitDataExtractor {
 	
 	private Header[] getCookies(CloseableHttpResponse resp) {
 		if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {	
-			System.out.println("SUccessfully Authenticated...");
+			System.out.println("Successfully Authenticated...");
 			Header[] headerlist = resp.getHeaders("Set-Cookie");
 			
 			return headerlist;
@@ -240,19 +247,29 @@ public class FitbitDataExtractor {
 	
 	public static void main(String[] args) {
 		FitbitDataExtractor extractor = new FitbitDataExtractor();
-		extractor.getAuthenticated("dtrihinas@gmail.com", "anoaek", "false");
+		
+		if (args.length == 3)
+			extractor.getAuthenticated(args[0], args[1], args[2]);
+		else if (args.length == 2)
+			extractor.getAuthenticated(args[0], args[1]);
+		else {
+			System.out.println(USAGE);
+			System.exit(-1);
+		}
+
+
 //		extractor.getIntraDayHeartandCalories("2016-01-31", true);
 //		extractor.getIntraDaySteps("2016-01-31", true);
 		
 //		for (int i = 1; i <= 31; i++)
 //			extractor.getIntraDaySteps("2016-03-" + i, true);
 
-		for (int i = 1; i <= 30; i++) {
-			extractor.getIntraDaySteps("2016-04-" + i, true);
-			extractor.getIntraDayCalories("2016-04-" + i, true);
-			extractor.getIntraDayFloors("2016-04-" + i, true);
-			extractor.getIntraDayActiveMins("2016-04-" + i, true);
-			extractor.getIntraDayDistance("2016-04-" + i, true);
+		for (int i = 1; i <= 31; i++) {
+			extractor.getIntraDaySteps("2016-07-" + i, true);
+			extractor.getIntraDayCalories("2016-07-" + i, true);
+			extractor.getIntraDayFloors("2016-07-" + i, true);
+			extractor.getIntraDayActiveMins("2016-07-" + i, true);
+			extractor.getIntraDayDistance("2016-07-" + i, true);
 		}
 	}
 }
