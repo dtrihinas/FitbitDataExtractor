@@ -36,7 +36,11 @@ Examples
 
 Disclaimer
 ----------
-The extractor is to get YOUR own data and was created and used solely for academic research. As fitbit changes its API the extractor may not work and may need some e.g. parameter changes (for changes please ask nicely!)
+The extractor is to get YOUR own data and was created and used solely for academic research. As fitbit changes its API the extractor may not work and may need some e.g. parameter changes (for changes please ask nicely!).
+
+When using the Data Extractor please use the following to our work:
+
+"Adaptive Monitoring Dissemination for the Internet of Things", Demetris Trihinas and George Pallis and Marios Dikaiakos, "IEEE INFOCOM 2017 - IEEE Conference on Computer Communications (INFOCOM 2017)", Atlanta, USA, 2017.
 
 Data
 -----
