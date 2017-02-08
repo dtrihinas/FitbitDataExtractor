@@ -93,8 +93,12 @@ public class FitbitDataExtractor {
     		System.out.println("getIntraDayHeartandCalories: Got Heart and Calorie Data");
     		System.out.println(json);
 
+    		String datatype = "heart-calories";
+    		
 	    	if (csv) {
-	    		BufferedWriter bw = new BufferedWriter(new FileWriter("heart-calories-" + day));
+	    		File f= new File(datatype);
+    			f.mkdir();
+	    		BufferedWriter bw = new BufferedWriter(new FileWriter(f.getAbsolutePath() + File.separator +datatype + "-" + day));
 
 	    		JSONParser parser = new JSONParser();
 	    		JSONArray arr = (JSONArray) parser.parse(json);
@@ -112,8 +116,12 @@ public class FitbitDataExtractor {
 	    			long bpm = (Long) point.get("bpm");
 	    			long confidence = (Long) point.get("confidence");
 	    			double caloriesBurned = (Double) point.get("caloriesBurned");
-	    			
-	    			bw.write(dateTime + "," + bpm + "," + caloriesBurned + "," + confidence + "\n");
+	    			String defaultZone = (String) point.get("defaultZone");
+
+	    			if (defaultZone == null) 
+	    				defaultZone = "null"; 
+	    			bw.write(dateTime + "," + bpm + "," + caloriesBurned + "," + confidence + "," + defaultZone + "\n");
+
 	    		}
 	    		bw.flush();
 	    		bw.close();
@@ -256,6 +264,28 @@ public class FitbitDataExtractor {
 		else {
 			System.out.println(USAGE);
 			System.exit(-1);
+		}
+		
+		
+
+//		//get heartrate and calories for specific data and store as csv
+//		extractor.getIntraDayHeartandCalories("2017-02-01", true);
+//		
+//		//get steps for specific data and store as csv
+//		extractor.getIntraDaySteps("2016-01-31", true);
+//		
+//		//get steps for a whole month and store as csv files per data type
+//		for (int i = 1; i <= 31; i++)
+//			extractor.getIntraDaySteps("2016-03-" + i, true);
+
+		//get everything for a whole month!
+		for (int i = 1; i <= 31; i++) {
+			extractor.getIntraDaySteps("2017-01-" + i, true);
+			extractor.getIntraDayCalories("2017-01-" + i, true);
+			extractor.getIntraDayFloors("2017-01-" + i, true);
+			extractor.getIntraDayActiveMins("2017-01-" + i, true);
+			extractor.getIntraDayDistance("2017-01-" + i, true);
+			extractor.getIntraDayHeartandCalories("2017-01-" + i, true);
 		}
 
 	}
